@@ -4,72 +4,102 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>项目展示 · 四个项目统一入口</title>
-<meta name="description" content="四个项目统一展示入口：鼎一跨境 AI 系统 · AI 工作台 · xLab · AI 招聘。Tab 切换，均为可直接演示的完整页面。" />
-<meta name="theme-color" content="#0b1a2b" />
+<meta name="description" content="四个项目的统一展示入口：鼎一跨境 AI 系统 · AI 工作台 · xLab · AI 招聘。" />
+<meta name="theme-color" content="#0b1120" />
 <style>
   :root{
-    --ink:#0b1a2b; --ink2:#132b45; --line:#e3e9f2; --sub:#5b7291;
-    --brand:#0e6fb8; --brand2:#12a5c9; --hi:#ffd84d; --bg:#f5f8fc;
+    --bg:#0b1120; --bg-deep:#070c17;
+    --panel:rgba(255,255,255,.04); --panel-2:rgba(255,255,255,.06);
+    --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.18);
+    --txt:#cbd5e1; --txt-hi:#e8eef8; --txt-dim:#94a3b8; --txt-mute:#64748b;
+    --cyan:#22d3ee; --indigo:#6366f1; --amber:#fbbf24;
+    --grad:linear-gradient(135deg,#22d3ee 0%,#6366f1 100%);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;background:var(--bg);color:#16202b;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
-  header{
-    position:sticky;top:0;z-index:10;
-    background:linear-gradient(120deg,#0b1a2b 0%,#123a63 60%,#0e5d86 100%);
-    color:#eaf3ff;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 6px 18px rgba(11,26,43,.18);
+  body{
+    margin:0;background:var(--bg);color:var(--txt);font:16px/1.6 var(--font);
+    -webkit-text-size-adjust:100%;
   }
-  .brand{display:flex;align-items:baseline;gap:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
-  .brand b{font-size:16px}
-  .brand small{font-weight:400;font-size:12px;color:#9fc0e0}
-  nav{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 0;flex:1 1 auto;scrollbar-width:none}
-  nav::-webkit-scrollbar{display:none}
-  .tab{
-    appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#dbe9f8;
-    padding:7px 13px;border-radius:999px;font-size:13px;cursor:pointer;white-space:nowrap;transition:.15s;
+  /* 背景光晕 + 细网格（与招聘页同款，纯 CSS） */
+  body::before{
+    content:"";position:fixed;inset:-20% -10% auto -10%;height:120vh;z-index:0;pointer-events:none;
+    background:radial-gradient(60% 55% at 20% 0%,rgba(34,211,238,.14),transparent 60%),
+               radial-gradient(55% 50% at 85% 5%,rgba(99,102,241,.16),transparent 62%);
   }
-  .tab:hover{background:rgba(255,255,255,.14)}
-  .tab[aria-selected="true"]{
-    background:var(--hi);border-color:var(--hi);color:#3a2c00;font-weight:700;
+  body::after{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(rgba(148,163,184,.045) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(148,163,184,.045) 1px,transparent 1px);
+    background-size:44px 44px;
   }
-  .tab:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
-  .open{
-    color:#cfe6ff;text-decoration:none;font-size:12.5px;border:1px solid rgba(255,255,255,.22);
-    padding:6px 11px;border-radius:999px;white-space:nowrap;
+
+  /* ===== 顶部导航（照抄招聘页 .nav / .nav-inner / .brand / .nav-links / .nav-cta）===== */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    background:rgba(11,17,32,.78);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
   }
-  .open:hover{background:rgba(255,255,255,.14)}
-  main{position:relative;height:calc(100vh - 54px)}
-  .hint{
-    position:absolute;inset:auto 12px 12px auto;z-index:5;
-    background:rgba(11,26,43,.86);color:#cfe6ff;font-size:12px;padding:6px 10px;border-radius:8px;
-    border:1px solid rgba(255,255,255,.14);pointer-events:none;transition:opacity .3s;
+  .nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--txt-hi);font-size:15px;white-space:nowrap}
+  .brand .dot{
+    width:11px;height:11px;border-radius:50%;background:var(--grad);flex:none;
+    box-shadow:0 0 0 4px rgba(34,211,238,.14),0 0 18px rgba(34,211,238,.7);
   }
-  iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
-  iframe[hidden]{display:none}
-  .empty{padding:40px 20px;color:var(--sub)}
+  .brand .sub{font-weight:400;font-size:12px;color:var(--txt-mute)}
+  .nav-links{display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{
+    padding:7px 11px;border-radius:8px;font-size:13px;color:var(--txt-dim);
+    white-space:nowrap;transition:background .2s,color .2s;cursor:pointer;text-decoration:none;
+  }
+  .nav-links a:hover{background:var(--panel-2);color:var(--txt-hi)}
+  .nav-links a.active{background:rgba(34,211,238,.13);color:#a5f3fc}
+  .nav-links a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:8px}
+  .nav-cta{
+    margin-left:8px;padding:8px 15px;border-radius:9px;font-size:13px;font-weight:600;
+    background:var(--grad);color:#06111d;white-space:nowrap;flex:none;text-decoration:none;
+  }
   @media (max-width:720px){
-    .brand small{display:none}
-    main{height:calc(100vh - 96px)}
+    .brand .sub{display:none}
+    .nav-links a{padding:6px 9px;font-size:12.5px}
+    .nav-cta{margin-left:4px;padding:7px 11px;font-size:12px}
+  }
+
+  /* ===== 内容区 ===== */
+  main{position:relative;z-index:1;padding-top:64px;height:100vh}
+  .stage{position:relative;width:100%;height:calc(100vh - 64px);background:#fff}
+  .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+  .stage iframe[hidden]{display:none}
+  .hint{
+    position:absolute;right:12px;bottom:12px;z-index:5;pointer-events:none;
+    background:rgba(11,17,32,.86);color:#a5f3fc;font-size:12px;padding:6px 10px;border-radius:8px;
+    border:1px solid var(--line);transition:opacity .3s;
   }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand"><b>项目展示</b><small>四个项目 · 一个入口 · 点击标签切换</small></div>
-  <nav id="tabs" role="tablist" aria-label="项目"></nav>
-  <a id="open" class="open" href="#" target="_blank" rel="noopener">在新窗口打开 ↗</a>
-</header>
-<main id="stage">
-  <div class="hint" id="hint">加载中…</div>
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span><span>项目展示</span><span class="sub">四个项目 · 一个入口</span></div>
+    <div class="nav-links" id="tabs" role="tablist" aria-label="项目"></div>
+    <a class="nav-cta" id="open" href="#" target="_blank" rel="noopener">在新窗口打开</a>
+  </div>
+</nav>
+<main>
+  <div class="stage" id="stage">
+    <div class="hint" id="hint">加载中…</div>
+  </div>
 </main>
 
 <script>
   const TABS = [
-    { id:'dingyi', label:'鼎一跨境 AI 系统', url:'https://ai.hydrationflask.cn/docs/dingyi-capabilities.html' },
-    { id:'workbench', label:'AI 工作台', url:'https://seeingsoft.github.io/ai-workbench-showcase/#versus' },
-    { id:'xlab', label:'xLab', url:'https://seeingsoft.github.io/xlab-showcase/' },
-    { id:'hiring', label:'AI 招聘', url:'https://ai-hiring.fde.warmc.cn/pitch/#story' }
+    { id:'dingyi',    label:'鼎一跨境 AI 系统', url:'https://ai.hydrationflask.cn/docs/dingyi-capabilities.html' },
+    { id:'workbench', label:'AI 工作台',        url:'https://seeingsoft.github.io/ai-workbench-showcase/#versus' },
+    { id:'xlab',      label:'xLab',             url:'https://seeingsoft.github.io/xlab-showcase/' },
+    { id:'hiring',    label:'AI 招聘',          url:'https://ai-hiring.fde.warmc.cn/pitch/#story' }
   ];
 
   const nav = document.getElementById('tabs');
@@ -77,56 +107,50 @@
   const openLink = document.getElementById('open');
   const hint = document.getElementById('hint');
   const frames = new Map();
-  let firstLoadDone = new Set();
+  const loaded = new Set();
+  let activeId = null;
 
-  function buildTabs(){
-    TABS.forEach((t, i) => {
-      const b = document.createElement('button');
-      b.className = 'tab'; b.type = 'button'; b.role = 'tab';
-      b.textContent = t.label; b.dataset.id = t.id;
-      b.addEventListener('click', () => select(t.id, true));
-      nav.appendChild(b);
-    });
-  }
+  TABS.forEach((t) => {
+    const a = document.createElement('a');
+    a.href = '#' + t.id;
+    a.textContent = t.label;
+    a.dataset.id = t.id;
+    a.setAttribute('role','tab');
+    a.addEventListener('click', (e) => { e.preventDefault(); select(t.id, true); });
+    nav.appendChild(a);
+  });
 
   function frameFor(tab){
     if (!frames.has(tab.id)){
       const f = document.createElement('iframe');
       f.title = tab.label;
       f.setAttribute('loading','lazy');
-      f.setAttribute('referrerpolicy','no-referrer-when-downgrade');
       f.allow = 'clipboard-write; fullscreen';
       f.src = tab.url;
       f.hidden = true;
       f.addEventListener('load', () => {
-        if (!firstLoadDone.has(tab.id)){
-          firstLoadDone.add(tab.id);
-          if (activeId === tab.id) hideHint();
-        }
+        loaded.add(tab.id);
+        if (activeId === tab.id) hideHint();
       });
       stage.appendChild(f);
       frames.set(tab.id, f);
     }
     return frames.get(tab.id);
   }
-
-  let activeId = null;
-  function hideHint(){ hint.style.opacity = '0'; setTimeout(()=>hint.remove(), 350); }
+  function hideHint(){ hint.style.opacity = '0'; setTimeout(() => hint.remove(), 350); }
 
   function select(id, push){
     const tab = TABS.find(t => t.id === id) || TABS[0];
     activeId = tab.id;
-    frames.forEach((f, k) => { f.hidden = k !== tab.id; });
-    const f = frameFor(tab);
-    f.hidden = false;
-    [...nav.children].forEach(b => b.setAttribute('aria-selected', String(b.dataset.id === tab.id)));
+    frames.forEach((f, k) => { f.hidden = (k !== tab.id); });
+    frameFor(tab).hidden = false;
+    [...nav.children].forEach(a => a.classList.toggle('active', a.dataset.id === tab.id));
     openLink.href = tab.url;
     document.title = tab.label + ' · 项目展示';
     if (push) history.replaceState(null, '', '#' + tab.id);
-    if (firstLoadDone.has(tab.id)) hideHint();
+    if (loaded.has(tab.id)) hideHint();
   }
 
-  buildTabs();
   const initial = (location.hash || '').replace('#','');
   select(TABS.some(t => t.id === initial) ? initial : TABS[0].id, false);
 
@@ -137,8 +161,7 @@
   addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     const i = TABS.findIndex(t => t.id === activeId);
-    const next = (i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length;
-    select(TABS[next].id, true);
+    select(TABS[(i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length].id, true);
   });
 </script>
 </body>
