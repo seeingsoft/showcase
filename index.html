@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>项目展示 · 四个项目统一入口</title>
+<meta name="description" content="四个项目统一展示入口：鼎一跨境 AI 系统 · AI 工作台 · xLab · AI 招聘。Tab 切换，均为可直接演示的完整页面。" />
+<meta name="theme-color" content="#0b1a2b" />
+<style>
+  :root{
+    --ink:#0b1a2b; --ink2:#132b45; --line:#e3e9f2; --sub:#5b7291;
+    --brand:#0e6fb8; --brand2:#12a5c9; --hi:#ffd84d; --bg:#f5f8fc;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:#16202b;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+  header{
+    position:sticky;top:0;z-index:10;
+    background:linear-gradient(120deg,#0b1a2b 0%,#123a63 60%,#0e5d86 100%);
+    color:#eaf3ff;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 6px 18px rgba(11,26,43,.18);
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+  .brand b{font-size:16px}
+  .brand small{font-weight:400;font-size:12px;color:#9fc0e0}
+  nav{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 0;flex:1 1 auto;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  .tab{
+    appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#dbe9f8;
+    padding:7px 13px;border-radius:999px;font-size:13px;cursor:pointer;white-space:nowrap;transition:.15s;
+  }
+  .tab:hover{background:rgba(255,255,255,.14)}
+  .tab[aria-selected="true"]{
+    background:var(--hi);border-color:var(--hi);color:#3a2c00;font-weight:700;
+  }
+  .tab:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+  .open{
+    color:#cfe6ff;text-decoration:none;font-size:12.5px;border:1px solid rgba(255,255,255,.22);
+    padding:6px 11px;border-radius:999px;white-space:nowrap;
+  }
+  .open:hover{background:rgba(255,255,255,.14)}
+  main{position:relative;height:calc(100vh - 54px)}
+  .hint{
+    position:absolute;inset:auto 12px 12px auto;z-index:5;
+    background:rgba(11,26,43,.86);color:#cfe6ff;font-size:12px;padding:6px 10px;border-radius:8px;
+    border:1px solid rgba(255,255,255,.14);pointer-events:none;transition:opacity .3s;
+  }
+  iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+  iframe[hidden]{display:none}
+  .empty{padding:40px 20px;color:var(--sub)}
+  @media (max-width:720px){
+    .brand small{display:none}
+    main{height:calc(100vh - 96px)}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>项目展示</b><small>四个项目 · 一个入口 · 点击标签切换</small></div>
+  <nav id="tabs" role="tablist" aria-label="项目"></nav>
+  <a id="open" class="open" href="#" target="_blank" rel="noopener">在新窗口打开 ↗</a>
+</header>
+<main id="stage">
+  <div class="hint" id="hint">加载中…</div>
+</main>
+
+<script>
+  const TABS = [
+    { id:'dingyi', label:'鼎一跨境 AI 系统', url:'https://ai.hydrationflask.cn/docs/dingyi-capabilities.html' },
+    { id:'workbench', label:'AI 工作台', url:'https://seeingsoft.github.io/ai-workbench-showcase/#versus' },
+    { id:'xlab', label:'xLab', url:'https://seeingsoft.github.io/xlab-showcase/' },
+    { id:'hiring', label:'AI 招聘', url:'https://ai-hiring.fde.warmc.cn/pitch/#story' }
+  ];
+
+  const nav = document.getElementById('tabs');
+  const stage = document.getElementById('stage');
+  const openLink = document.getElementById('open');
+  const hint = document.getElementById('hint');
+  const frames = new Map();
+  let firstLoadDone = new Set();
+
+  function buildTabs(){
+    TABS.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.className = 'tab'; b.type = 'button'; b.role = 'tab';
+      b.textContent = t.label; b.dataset.id = t.id;
+      b.addEventListener('click', () => select(t.id, true));
+      nav.appendChild(b);
+    });
+  }
+
+  function frameFor(tab){
+    if (!frames.has(tab.id)){
+      const f = document.createElement('iframe');
+      f.title = tab.label;
+      f.setAttribute('loading','lazy');
+      f.setAttribute('referrerpolicy','no-referrer-when-downgrade');
+      f.allow = 'clipboard-write; fullscreen';
+      f.src = tab.url;
+      f.hidden = true;
+      f.addEventListener('load', () => {
+        if (!firstLoadDone.has(tab.id)){
+          firstLoadDone.add(tab.id);
+          if (activeId === tab.id) hideHint();
+        }
+      });
+      stage.appendChild(f);
+      frames.set(tab.id, f);
+    }
+    return frames.get(tab.id);
+  }
+
+  let activeId = null;
+  function hideHint(){ hint.style.opacity = '0'; setTimeout(()=>hint.remove(), 350); }
+
+  function select(id, push){
+    const tab = TABS.find(t => t.id === id) || TABS[0];
+    activeId = tab.id;
+    frames.forEach((f, k) => { f.hidden = k !== tab.id; });
+    const f = frameFor(tab);
+    f.hidden = false;
+    [...nav.children].forEach(b => b.setAttribute('aria-selected', String(b.dataset.id === tab.id)));
+    openLink.href = tab.url;
+    document.title = tab.label + ' · 项目展示';
+    if (push) history.replaceState(null, '', '#' + tab.id);
+    if (firstLoadDone.has(tab.id)) hideHint();
+  }
+
+  buildTabs();
+  const initial = (location.hash || '').replace('#','');
+  select(TABS.some(t => t.id === initial) ? initial : TABS[0].id, false);
+
+  addEventListener('hashchange', () => {
+    const id = (location.hash || '').replace('#','');
+    if (TABS.some(t => t.id === id) && id !== activeId) select(id, false);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const i = TABS.findIndex(t => t.id === activeId);
+    const next = (i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length;
+    select(TABS[next].id, true);
+  });
+</script>
+</body>
+</html>
